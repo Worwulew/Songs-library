@@ -1,0 +1,216 @@
+basePath: /api/v1
+definitions:
+  httpErrors.RestError:
+    description: RestError is a struct that represents an error response It contains
+      the status code, error message, and causes of the error
+    properties:
+      error:
+        type: string
+      status:
+        type: integer
+    type: object
+  model.Song:
+    description: Song is a struct that represents a song
+    properties:
+      group:
+        example: AC/DC
+        type: string
+      link:
+        type: string
+      releaseDate:
+        type: string
+      songTitle:
+        example: Long way to Hell
+        type: string
+      text:
+        type: string
+    required:
+    - group
+    - songTitle
+    type: object
+  model.SongsList:
+    description: SongsList is a struct list of songs for searching response
+    properties:
+      has_more:
+        type: boolean
+      page:
+        type: integer
+      size:
+        type: integer
+      songs:
+        items:
+          $ref: '#/definitions/model.Song'
+        type: array
+      total_count:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+info:
+  contact:
+    email: gregoridagmo@gmail.com
+    name: Grigory
+    url: https://github.com/Worwulew
+  description: Songs library REST API
+  title: Songs library REST API
+  version: "1.0"
+paths:
+  /songs:
+    post:
+      consumes:
+      - application/json
+      description: Create song handler
+      parameters:
+      - description: request for creating song
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.Song'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Song'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/httpErrors.RestError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/httpErrors.RestError'
+      summary: Create song
+      tags:
+      - Song
+  /songs/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete by id song handler
+      parameters:
+      - description: song_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/httpErrors.RestError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/httpErrors.RestError'
+      summary: Delete song
+      tags:
+      - Song
+    put:
+      consumes:
+      - application/json
+      description: Update song handler
+      parameters:
+      - description: song_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: request for updating song
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.Song'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Song'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/httpErrors.RestError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/httpErrors.RestError'
+      summary: Update song
+      tags:
+      - Song
+  /songs/{id}/text:
+    get:
+      consumes:
+      - application/json
+      description: GetSongText by id song handler
+      parameters:
+      - description: song_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: page number
+        format: page
+        in: query
+        name: page
+        type: integer
+      - description: number of elements per page
+        format: size
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: GetSongText gets song's verses with pagination
+      tags:
+      - Song
+  /songs/search:
+    get:
+      consumes:
+      - application/json
+      description: Search songs by fields
+      parameters:
+      - description: song title
+        in: query
+        name: title
+        type: string
+      - description: song group
+        in: query
+        name: group
+        type: string
+      - description: page number
+        format: page
+        in: query
+        name: page
+        type: integer
+      - description: number of elements per page
+        format: size
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SongsList'
+      summary: Search by fields
+      tags:
+      - Song
+swagger: "2.0"

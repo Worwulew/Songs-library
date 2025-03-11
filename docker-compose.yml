@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  postgresql:
+    image: postgres:latest
+    container_name: api_postgresql
+    ports:
+      - "${POSTGRES_POSTGRESQLPORT}:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_POSTGRESQLUSER}
+      - POSTGRES_PASSWORD=${POSTGRES_POSTGRESQLPASSWORD}
+      - POSTGRES_DB=${POSTGRES_POSTGRESQLDBNAME}
+    healthcheck:
+      test: pg_isready -d ${POSTGRES_POSTGRESQLDBNAME} -U ${POSTGRES_POSTGRESQLUSER}
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - db_data:/var/lib/postgresql/data
+volumes:
+  db_data:
